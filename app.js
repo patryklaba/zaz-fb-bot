@@ -2,12 +2,15 @@ const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
 
+const MenuOtd = require('./models/menuOtd');
+const db = mongoose.connect(process.env.MONGODB_URI);
+const Scraper = require('./Scraper');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
-
+Scraper.scrapeAndSaveWholeWeek();
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');
@@ -36,8 +39,11 @@ app.post('/webhook', (req, res, next) => {
       // Iterate over each messaging event
       entry.messaging.forEach(event => {
         if (event.postback) {
-          console.log(`Got new postback event`, event);
+          console.log(`Got new postback event`);
           processPostback(event);
+        } else if (event.message) {
+          console.log(`Got new message event`);
+          processMessage(event);
         }
       });
     });
@@ -73,6 +79,44 @@ const processPostback = (event) => {
       const message = `${greeting} Jestem ZAZBot i mogę Ci przedstawić menu w naszej restauracji na najbliższe dni.`;
       sendMessage(senderId, {text: message});
     });
+  }
+};
+
+const processMessage = (event) => {
+  if (!event.message.is_echo) {
+    const message = event.message;
+    const senderId = event.sender.id;
+
+    console.log(`Received message from senderId ${senderId}`);
+    console.log(`Message is: ${JSON.stringify(message)}`);
+
+    // text or attachement but not both
+    if (message.text) {
+      const formattedMsg = message.text.toLowerCase().trim();
+
+      // check for keywords and send back corresponding data
+      // otherwise send menu for current day
+
+      switch(formattedMsg) {
+        case 'poniedzialek':
+        case 'poniedziałek':
+        case 'wtorek':
+        case 'sroda':
+        case 'środa':
+        case 'czwartek':
+        case 'piatek':
+        case 'piątek':
+          getMenuOtd(senderId, formattedMsg);
+          break;
+        case 'tydzien':
+          getWeeklyMenu(senderId, formattedMsg);
+        default:
+          getTodaysMenu(senderId, formattedMsg);
+
+      }
+    } else if (message.attachements) {
+      sendMessage(senderId, {text: `Przepraszam, ale nie rozumiem Twojej prośby. Wpisz nazwę dnia tygodnia, aby zobaczyć menu.`});
+    }
   }
 };
 
