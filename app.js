@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
 const db = mongoose.connect(process.env.MONGODB_URI);
 const Scraper = require('./Scraper');
+const TextHelper = require('./TextHelper');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
@@ -92,24 +93,21 @@ const processMessage = (event) => {
 
     // text or attachement but not both
     if (message.text) {
-      const formattedMsg = message.text.toLowerCase().trim();
+      const formattedMsg = TextHelper.escapeDiacritics(message.text.toLowerCase().trim());
 
       // check for keywords and send back corresponding data
       // otherwise send menu for current day
 
       switch(formattedMsg) {
         case 'poniedzialek':
-        case 'poniedziałek':
         case 'wtorek':
         case 'sroda':
-        case 'środa':
         case 'czwartek':
         case 'piatek':
-        case 'piątek':
-          getMenuOtd(senderId, formattedMsg);
-          break;
+          // getMenuOtd(senderId, formattedMsg);
+          // break;
         case 'tydzien':
-          getWeeklyMenu(senderId, formattedMsg);
+          // getWeeklyMenu(senderId, formattedMsg);
         default:
           getTodaysMenu(senderId, formattedMsg);
 
@@ -119,6 +117,8 @@ const processMessage = (event) => {
     }
   }
 };
+
+
 
 // send message to user
 const sendMessage = (recipientId, message) => {
@@ -135,4 +135,25 @@ const sendMessage = (recipientId, message) => {
       console.log(`Error while sending message: ${response.error}`);
     }
   });
+};
+
+const weekdays = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
+
+const getTodaysMenu = (senderId, message) => {
+  const weekdayIdx = new Date().getDay();
+  if (weekdayIdx < 1 || weekdayIdx > 5) {
+    // TODO: send a message that informs user about the weekend
+    return 0;
+  }
+
+  MenuOtd
+    .find({weekday: weekdays[weekdayIdx]})
+    .select('weekday content')
+    .then(doc => {
+      console.log(doc);
+      sendMessage(senderId, doc.content.join('\n'));
+    })
+    .catch(error => {
+      console.log(error);
+    });
 };
