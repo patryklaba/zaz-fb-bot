@@ -11,6 +11,7 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
+// TODO: below should be scheduled and executed once a week!
 Scraper.scrapeAndSaveWholeWeek();
 
 app.get('/', (req, res) => {
@@ -140,7 +141,7 @@ const sendMessage = (recipientId, message) => {
 const weekdays = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
 
 const getTodaysMenu = (senderId, message) => {
-  console.log(`[INFO]About to present menu for today to the user`);
+  console.log(`[INFO]~~ About to present menu for today to the user`);
   const weekdayIdx = new Date().getDay();
   if (weekdayIdx < 1 || weekdayIdx > 5) {
     // TODO: send a message that informs user about the weekend
@@ -152,7 +153,9 @@ const getTodaysMenu = (senderId, message) => {
     .select('weekday content')
     .then(doc => {
       console.log(doc);
-      sendMessage(senderId, doc.content.join('\n'));
+      let menuContent = doc.content.join('\n');
+      console.log(`[INFO]~~ sending to user: ${menuContent}`);
+      sendMessage(senderId, {text: menuContent});
     })
     .catch(error => {
       console.log(error);
