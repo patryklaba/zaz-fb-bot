@@ -94,7 +94,7 @@ const processMessage = (event) => {
     // text or attachement but not both
     if (message.text) {
       const formattedMsg = TextHelper.escapeDiacritics(message.text.toLowerCase().trim());
-
+      console.log(`Formatted message is: ${formattedMsg}`);
       // check for keywords and send back corresponding data
       // otherwise send menu for current day
 
@@ -140,6 +140,7 @@ const sendMessage = (recipientId, message) => {
 const weekdays = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
 
 const getTodaysMenu = (senderId, message) => {
+  console.log(`[INFO]About to present menu for today to the user`);
   const weekdayIdx = new Date().getDay();
   if (weekdayIdx < 1 || weekdayIdx > 5) {
     // TODO: send a message that informs user about the weekend
