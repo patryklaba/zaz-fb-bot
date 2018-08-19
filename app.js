@@ -1,7 +1,7 @@
 const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
-
+const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
 const db = mongoose.connect(process.env.MONGODB_URI);
 const Scraper = require('./Scraper');
