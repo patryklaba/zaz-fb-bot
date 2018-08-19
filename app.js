@@ -144,8 +144,8 @@ const getTodaysMenu = (senderId, message) => {
   console.log(`[INFO]~~ About to present menu for today to the user`);
   const weekdayIdx = new Date().getDay();
   if (weekdayIdx < 1 || weekdayIdx > 5) {
-    // TODO: send a message that informs user about the weekend
-    return 0;
+    sendMessage(senderId, {text: `Hej! Mamy weekend, więc stołówka nie jest czynna. Zapraszamy od poniedziałku`});
+    return;
   }
 
   MenuOtd
