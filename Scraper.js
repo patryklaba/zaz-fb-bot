@@ -2,7 +2,6 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
-const db = mongoose.connect(process.env.MONGODB_URI);
 
 exports.scrapeAndSaveWholeWeek = () => {
   const url = 'http://zaz-siedlce.pl';
