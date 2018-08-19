@@ -153,7 +153,7 @@ const getTodaysMenu = (senderId, message) => {
     .select('weekday content')
     .then(doc => {
       console.log(doc);
-      let menuContent = doc.content.join('\n');
+      let menuContent = doc[0].content.join('\n');
       console.log(`[INFO]~~ sending to user: ${menuContent}`);
       sendMessage(senderId, {text: menuContent});
     })
