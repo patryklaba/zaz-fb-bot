@@ -24,3 +24,71 @@ app.get('/webhook', (req, res) => {
     res.status(403);
   }
 });
+
+
+// All calbacks for messenger will be POST-ed here
+app.post('/webhook', (req, res, next) => {
+  // Make sure this is a page subscription
+  if (req.body.object === 'page') {
+    // Iterate over each entry
+    // Sometimes messages are batched and sent together
+    req.body.entry.forEach(entry => {
+      // Iterate over each messaging event
+      entry.messaging.forEach(event => {
+        if (event.postback) {
+          console.log(`Got new postback event`, event);
+          processPostback(event);
+        }
+      });
+    });
+    res.sendStatus(200);
+  }
+});
+
+
+const processPostback = (event) => {
+  const senderId = event.sender.id;
+  const payload = event.postback.payload;
+  console.log(`Got following payload: ${payload}`);
+  if (payload === 'Greeting') {
+    // Get user's first name from the User Profile API
+    // and include it in the greeting
+
+    request({
+      url: `https://graph.facebook.com/v2.6/${senderId}`,
+      qs: {
+        access_token: process.env.PAGE_ACCESS_TOKEN,
+        fields: "first_name"
+      },
+      method: 'GET'
+    }, (error, response, body) => {
+      let greeting = "";
+      if (error) {
+        console.log(`Error while getting user's name from API`, error);
+      } else {
+        const bodyObj = JSON.parse(body);
+        const name = bodyObj.first_name;
+        greeting = `Cześć, ${name}.`;
+      }
+      const message = `${greeting} Jestem ZAZBot i mogę Ci przedstawić menu w naszej restauracji na najbliższe dni.`;
+      sendMessage(senderId, {text: message});
+    });
+  }
+};
+
+// send message to user
+const sendMessage = (recipientId, message) => {
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+    method: 'POST',
+    json: {
+      recipient: {id: recipientId},
+      message: message
+    }
+  }, (error, response, body) => {
+    if (error) {
+      console.log(`Error while sending message: ${response.error}`);
+    }
+  });
+};
