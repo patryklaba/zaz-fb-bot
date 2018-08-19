@@ -14,7 +14,7 @@ exports.scrapeAndSaveWholeWeek = () => {
         const $ = cheerio.load(response.data);
         const menu = $('.clFoodMenu').find('.ce_text');
         menu.each( (i, day) => {
-          let weekday = TextHelper.escapeDiacritics($(day).find('h3').text().trim());
+          let weekday = TextHelper.escapeDiacritics($(day).find('h3').text().trim().toLowerCase());
           let content = $(day).find('p').map((i, el) => $(el).text().trim()).get();
           const menuDoc = {
             _id: new mongoose.Types.ObjectId(),
@@ -22,7 +22,6 @@ exports.scrapeAndSaveWholeWeek = () => {
             content
           };
           let menuOtd = new MenuOtd(menuDoc);
-          console.log(menuDoc);
           menuOtd.save()
             .then(result => {
               console.log('Menu for the day saved', result);
