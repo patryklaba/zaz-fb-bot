@@ -34,6 +34,7 @@ app.get('/webhook', (req, res) => {
 // All calbacks for messenger will be POST-ed here
 app.post('/webhook', (req, res, next) => {
   // Make sure this is a page subscription
+  console.log(`~~[INFO]~~ Got request body object: ${request.body.object}`);
   if (req.body.object === 'page') {
     // Iterate over each entry
     // Sometimes messages are batched and sent together
