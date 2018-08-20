@@ -100,18 +100,23 @@ const processMessage = (event) => {
       // otherwise send menu for current day
 
       switch(formattedMsg) {
+        case 'dzisiaj':
+        case 'dzis':
+          getTodaysMenu(senderId, formattedMsg);
+          break;
         case 'poniedzialek':
         case 'wtorek':
         case 'sroda':
         case 'czwartek':
         case 'piatek':
-          // getMenuOtd(senderId, formattedMsg);
-          // break;
+          getSpecificDayMenu(senderId, formattedMsg);
+          break;
         case 'tydzien':
           // getWeeklyMenu(senderId, formattedMsg);
+          break;
         default:
-          getTodaysMenu(senderId, formattedMsg);
-
+          sendInfoMessage(senderId);
+          break;
       }
     } else if (message.attachements) {
       sendMessage(senderId, {text: `Przepraszam, ale nie rozumiem Twojej prośby. Wpisz nazwę dnia tygodnia, aby zobaczyć menu.`});
@@ -138,6 +143,18 @@ const sendMessage = (recipientId, message) => {
   });
 };
 
+const sendInfoMessage = (senderId) => {
+  const infoMsg = 'Nie rozpoznaję tej komendy :(' + '\n' + 'Lista komend: \n'
+                  + 'dzisiaj - prezentuje dzisiejsze menu \n'
+                  + 'poniedziałek - prezentuje menu na poniedziałek \n'
+                  + 'wtorek - prezentuje menu na wtorek \n'
+                  + 'pozostałe nazwy dni tygodnia - menu na dany dzień \n'
+                  + 'tydzień - menu na cały tydzień \n'
+                  + 'Mam nadzieję, że pomogłem. :)';
+
+  sendMessage(senderId, {text: infoMsg});
+}
+
 const weekdays = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
 
 const getTodaysMenu = (senderId, message) => {
@@ -161,3 +178,19 @@ const getTodaysMenu = (senderId, message) => {
       console.log(error);
     });
 };
+
+const getSpecificDayMenu = (senderId, message) => {
+  MenuOtd
+    .find({weekday: message})
+    .select('weekday content')
+    .then(doc => {
+      let menuContent = doc[0].content.join('\n');
+      console.log(`[INFO]~~ sending to user: ${menuContent}`);
+      sendMessage(senderId, {
+        text: `Dzisiaj serwujemy: \n ${menuContent}`
+      });
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
