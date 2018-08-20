@@ -144,12 +144,12 @@ const sendMessage = (recipientId, message) => {
 };
 
 const sendInfoMessage = (senderId) => {
-  const infoMsg = 'Nie rozpoznaję tej komendy :(' + '\n' + 'Lista komend: \n'
-                  + 'dzisiaj - prezentuje dzisiejsze menu \n'
-                  + 'poniedziałek - prezentuje menu na poniedziałek \n'
-                  + 'wtorek - prezentuje menu na wtorek \n'
-                  + 'pozostałe nazwy dni tygodnia - menu na dany dzień \n'
-                  + 'tydzień - menu na cały tydzień \n'
+  const infoMsg = 'Nie rozpoznaję tej komendy :(' + '\n' + 'Lista komend:\n'
+                  + 'dzisiaj - prezentuje dzisiejsze menu\n'
+                  + 'poniedziałek - prezentuje menu na poniedziałek\n'
+                  + 'wtorek - prezentuje menu na wtorek\n'
+                  + 'pozostałe nazwy dni tygodnia - menu na dany dzień\n'
+                  + 'tydzień - menu na cały tydzień.\n'
                   + 'Mam nadzieję, że pomogłem. :)';
 
   sendMessage(senderId, {text: infoMsg});
@@ -187,7 +187,7 @@ const getSpecificDayMenu = (senderId, message) => {
       let menuContent = doc[0].content.join('\n');
       console.log(`[INFO]~~ sending to user: ${menuContent}`);
       sendMessage(senderId, {
-        text: `Dzisiaj serwujemy: \n ${menuContent}`
+        text: `Menu dla dnia ${message}:\n${menuContent}`
       });
     })
     .catch(error => {
