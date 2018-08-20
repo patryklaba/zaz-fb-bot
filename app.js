@@ -37,15 +37,19 @@ app.post('/webhook', (req, res, next) => {
   if (req.body.object === 'page') {
     // Iterate over each entry
     // Sometimes messages are batched and sent together
+    console.log(`~~[INFO]~~ got page request`);
     req.body.entry.forEach(entry => {
       // Iterate over each messaging event
       entry.messaging.forEach(event => {
+        console.log(`~~[INFO]~~ Got an event: ${event}`);
         if (event.postback) {
           console.log(`Got new postback event`);
           processPostback(event);
         } else if (event.message) {
           console.log(`Got new message event`);
           processMessage(event);
+        } else {
+          console.log(`~~[WARN]~~ got an event that cannot be recognized!`);
         }
       });
     });
