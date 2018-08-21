@@ -117,7 +117,7 @@ const processMessage = (event) => {
           getSpecificDayMenu(senderId, formattedMsg);
           break;
         case 'tydzien':
-          // getWeeklyMenu(senderId, formattedMsg);
+          // getFullWeekMenu(senderId, formattedMsg);
           break;
         default:
           sendInfoMessage(senderId);
@@ -158,7 +158,7 @@ const sendInfoMessage = (senderId) => {
                   + 'Mam nadzieję, że pomogłem. :)';
 
   sendMessage(senderId, {text: infoMsg});
-}
+};
 
 const weekdays = ['niedziela', 'poniedzialek', 'wtorek', 'sroda', 'czwartek', 'piatek', 'sobota'];
 
@@ -198,4 +198,19 @@ const getSpecificDayMenu = (senderId, message) => {
     .catch(error => {
       console.log(error);
     });
-}
+};
+
+const getFullWeekMenu = (senderId, message) => {
+  MenuOtd.find({})
+    .exec()
+    .then(days => {
+      const msg = days.content.join('\n');
+      console.log(`[INFO]~~ sending to user a menu for a whole week.`);
+      sendMessage(senderId, {
+        text: `Menu dla całego tygodnia: \n${msg}`
+      })
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
