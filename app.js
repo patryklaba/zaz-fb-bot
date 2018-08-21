@@ -202,7 +202,7 @@ const getSpecificDayMenu = (senderId, message) => {
 
 const getFullWeekMenu = (senderId, message) => {
   MenuOtd.find({})
-    .exec()
+    .select('weekday content')
     .then(days => {
       const msg = days.content.join('\n');
       console.log(`[INFO]~~ sending to user a menu for a whole week.`);
