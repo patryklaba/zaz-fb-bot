@@ -117,7 +117,7 @@ const processMessage = (event) => {
           getSpecificDayMenu(senderId, formattedMsg);
           break;
         case 'tydzien':
-          // getFullWeekMenu(senderId, formattedMsg);
+          getFullWeekMenu(senderId, formattedMsg);
           break;
         default:
           sendInfoMessage(senderId);
