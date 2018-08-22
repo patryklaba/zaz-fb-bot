@@ -204,11 +204,17 @@ const getFullWeekMenu = (senderId, message) => {
   MenuOtd.find({})
     .select('weekday content')
     .then(days => {
-      const msg = days.content.join('\n');
+      // TODO: tutaj powinna byc petla forEach + trzeba dodać nazwę dnia dla którego to będzie menu
+      let message = '';
+      days.forEach(day => {
+        message += `${day.weekday}:
+        ${day.content.join('\n')}`;
+      });
       console.log(`[INFO]~~ sending to user a menu for a whole week.`);
       sendMessage(senderId, {
-        text: `Menu dla całego tygodnia: \n${msg}`
-      })
+        text: `Menu dla całego tygodnia: 
+        ${message}`
+      });
     })
     .catch(error => {
       console.log(error);
