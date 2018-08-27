@@ -5,6 +5,7 @@ const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
 exports.getAndSaveMenuContent = (url) => {
+  console.log('Trying to get content from:', url);
   axios.get(url)
     .then(response => {
       if (response.status === '200') {
@@ -13,10 +14,7 @@ exports.getAndSaveMenuContent = (url) => {
       }
     })
     .catch(error => {
-      return {
-        response: null,
-        error
-      };
+      console.log('Getting content failed', error);
     });
 };
 
