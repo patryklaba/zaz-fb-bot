@@ -4,16 +4,14 @@ const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
+const url = 'http://zaz-siedlce.pl';
 
-const getContent = (url) => {
+exports.getAndSaveMenuContent = (url) => {
   axios.get(url)
     .then(response => {
       if (response.status === '200') {
         console.log('Get content from ZAZ successful. Status code is 200');
-        return {
-          data: response.data,
-          error: null
-        };
+        processContent(response, saveContent);
       }
     })
     .catch(error => {
@@ -51,11 +49,11 @@ const saveContent = (menuDoc) => {
     });
 };
 
-exports.scrapeAndSaveWholeWeek = () => {
-  let url = 'http://zaz-siedlce.pl';
-  const content = getContent(url);
-  processContent(content, saveContent);
-};
+// exports.scrapeAndSaveWholeWeek = () => {
+//   let url = 'http://zaz-siedlce.pl';
+//   const content = getContent(url);
+//   processContent(content, saveContent);
+// };
 
 // exports.scrapeAndSaveWholeWeek = () => {
 //   axios.get(url)

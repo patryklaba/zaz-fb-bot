@@ -18,7 +18,7 @@ app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port 
 // const job = schedule.scheduleJob('0 2 * * 1', () => {
 //   Scraper.scrapeAndSaveWholeWeek();
 // });
-Scraper.scrapeAndSaveWholeWeek();
+Scraper.getAndSaveMenuContent();
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');
