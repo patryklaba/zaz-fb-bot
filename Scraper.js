@@ -8,7 +8,7 @@ exports.getAndSaveMenuContent = (url) => {
   console.log('Trying to get content from:', url);
   axios.get(url)
     .then(response => {
-      if (response.status === '200') {
+      if (response.status === 200) {
         console.log('Get content from ZAZ successful. Status code is 200');
         processContent(response, saveContent);
       }
