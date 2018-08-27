@@ -178,7 +178,7 @@ const getTodaysMenu = (senderId, message) => {
   }
 
   MenuOtd
-    .find({weekday: weekdays[weekdayIdx]})
+    .find({weekday_esc: weekdays[weekdayIdx]})
     .select('weekday content')
     .then(doc => {
       console.log(doc);
@@ -193,13 +193,13 @@ const getTodaysMenu = (senderId, message) => {
 
 const getSpecificDayMenu = (senderId, message) => {
   MenuOtd
-    .find({weekday: message})
+    .find({weekday_esc: message})
     .select('weekday content')
     .then(doc => {
       let menuContent = doc[0].content.join('\n');
       console.log(`[INFO]~~ sending to user: ${menuContent}`);
       sendMessage(senderId, {
-        text: `Menu dla dnia ${message}:\n${menuContent}`
+        text: `Menu dla dnia ${doc.weekday}:\n${menuContent}`
       });
     })
     .catch(error => {
@@ -211,7 +211,6 @@ const getFullWeekMenu = (senderId, message) => {
   MenuOtd.find({})
     .select('weekday content')
     .then(days => {
-      // TODO: tutaj powinna byc petla forEach + trzeba dodać nazwę dnia dla którego to będzie menu
       let message = '';
       days.forEach(day => {
         message += `${day.weekday}:\n` +`${day.content.join('\n')} \n`;

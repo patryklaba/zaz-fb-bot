@@ -23,11 +23,13 @@ const processContent = (content, cb) => {
   const menu = $('.clFoodMenu').find('.ce_text');
 
   menu.each( (i, day) => {
-    let weekday = TextHelper.escapeDiacritics($(day).find('h3').text().trim().toLowerCase());
+    let weekday = $(day).find('h3').text().trim().toLowerCase()
+    let weekday_esc = TextHelper.escapeDiacritics(weekday);
     let content = $(day).find('p').map((i, el) => $(el).text().trim()).get();
     const menuDoc = {
       _id: new mongoose.Types.ObjectId(),
       weekday,
+      weekday_esc,
       content
     };
     cb(menuDoc);
@@ -44,43 +46,6 @@ const saveContent = (menuDoc) => {
       console.log('An error occurred while saving to db', err);
     });
 };
-
-// exports.scrapeAndSaveWholeWeek = () => {
-//   let url = 'http://zaz-siedlce.pl';
-//   const content = getContent(url);
-//   processContent(content, saveContent);
-// };
-
-// exports.scrapeAndSaveWholeWeek = () => {
-//   axios.get(url)
-//     .then(response => {
-//       const eachDayMenu = [];
-//       if(response.status === 200) {
-//         const $ = cheerio.load(response.data);
-//         const menu = $('.clFoodMenu').find('.ce_text');
-//         menu.each( (i, day) => {
-//           let weekday = TextHelper.escapeDiacritics($(day).find('h3').text().trim().toLowerCase());
-//           let content = $(day).find('p').map((i, el) => $(el).text().trim()).get();
-//           const menuDoc = {
-//             _id: new mongoose.Types.ObjectId(),
-//             weekday,
-//             content
-//           };
-//           let menuOtd = new MenuOtd(menuDoc);
-//           menuOtd.save()
-//             .then(result => {
-//               console.log('Menu for the day saved', result);
-//             })
-//             .catch(err => {
-//               console.log('An error occurred while saving to db', err);
-//             })
-//         });
-//       }
-//     })
-//     .catch(error => {
-//       console.log(error);
-//     });
-// };
 
 
 
