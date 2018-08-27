@@ -7,6 +7,7 @@ const MenuOtd = require('./models/menuOtd');
 const db = mongoose.connect(process.env.MONGODB_URI);
 const Scraper = require('./Scraper');
 const TextHelper = require('./TextHelper');
+const url = 'http://zaz-siedlce.pl';
 
 
 const app = express();
@@ -18,7 +19,7 @@ app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port 
 // const job = schedule.scheduleJob('0 2 * * 1', () => {
 //   Scraper.scrapeAndSaveWholeWeek();
 // });
-Scraper.getAndSaveMenuContent();
+Scraper.getAndSaveMenuContent(url);
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');

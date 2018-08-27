@@ -4,8 +4,6 @@ const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
-const url = 'http://zaz-siedlce.pl';
-
 exports.getAndSaveMenuContent = (url) => {
   axios.get(url)
     .then(response => {
