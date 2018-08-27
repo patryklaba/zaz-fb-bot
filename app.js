@@ -1,18 +1,23 @@
 const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
+const schedule = require('node-schedule');
 const mongoose = require('mongoose');
 const MenuOtd = require('./models/menuOtd');
 const db = mongoose.connect(process.env.MONGODB_URI);
 const Scraper = require('./Scraper');
 const TextHelper = require('./TextHelper');
 
+
 const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
 // TODO: below should be scheduled and executed once a week!
-Scraper.scrapeAndSaveWholeWeek();
+// Each monday at 2 am
+const job = schedule.scheduleJob('0 2 * * 1', () => {
+  Scraper.scrapeAndSaveWholeWeek();
+});
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');
