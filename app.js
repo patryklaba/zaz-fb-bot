@@ -15,9 +15,10 @@ app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
 // TODO: below should be scheduled and executed once a week!
 // Each monday at 2 am
-const job = schedule.scheduleJob('0 2 * * 1', () => {
-  Scraper.scrapeAndSaveWholeWeek();
-});
+// const job = schedule.scheduleJob('0 2 * * 1', () => {
+//   Scraper.scrapeAndSaveWholeWeek();
+// });
+Scraper.scrapeAndSaveWholeWeek();
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');
