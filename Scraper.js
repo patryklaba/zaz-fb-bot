@@ -23,8 +23,8 @@ const processContent = (content, cb) => {
   const menu = $('.clFoodMenu').find('.ce_text');
 
   menu.each( (i, day) => {
-    let weekday = $(day).find('h3').text().trim().toLowerCase()
-    let weekday_esc = TextHelper.escapeDiacritics(weekday);
+    let weekday = $(day).find('h3').text().trim();
+    let weekday_esc = TextHelper.escapeDiacritics(weekday.toLowerCase());
     let content = $(day).find('p').map((i, el) => $(el).text().trim()).get();
     const menuDoc = {
       _id: new mongoose.Types.ObjectId(),
