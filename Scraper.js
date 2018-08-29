@@ -5,7 +5,7 @@ const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
 exports.getAndSaveMenuContent = (url) => {
-  if (countDocsInCollection > 0) {
+  if (countDocsInCollection() > 0) {
     console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
     return;
   }
