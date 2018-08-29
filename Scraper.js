@@ -5,7 +5,7 @@ const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
 exports.getAndSaveMenuContent = (url) => {
-  if (!isCollectionEmpty()) {
+  if (countDocsInCollection > 0) {
     console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
     return;
   }
@@ -22,8 +22,10 @@ exports.getAndSaveMenuContent = (url) => {
     });
 };
 
-const isCollectionEmpty = () => {
-  return MenuOtd.estimatedDocumentCount() < 1;
+const countDocsInCollection = () => {
+  const collCount = MenuOtd.estimatedDocumentCount();
+  console.log(`~~[INFO]~~ number of docs in collection: ${collCount}`);
+  return  collCount;
 };
 
 const processContent = (content, cb) => {
