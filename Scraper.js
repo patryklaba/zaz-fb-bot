@@ -5,6 +5,10 @@ const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
 exports.getAndSaveMenuContent = (url) => {
+  if (!isCollectionEmpty()) {
+    console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
+    return;
+  }
   console.log('Trying to get content from:', url);
   axios.get(url)
     .then(response => {
@@ -16,6 +20,10 @@ exports.getAndSaveMenuContent = (url) => {
     .catch(error => {
       console.log('Getting content failed', error);
     });
+};
+
+const isCollectionEmpty = () => {
+  return MenuOtd.estimatedDocumentCount() < 1;
 };
 
 const processContent = (content, cb) => {
