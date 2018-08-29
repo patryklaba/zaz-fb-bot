@@ -9,16 +9,16 @@ exports.getAndSaveMenuContent = (url) => {
     console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
     return;
   }
-  console.log('Trying to get content from:', url);
+  console.log('~~[INFO]~~ Trying to get content from:', url);
   axios.get(url)
     .then(response => {
       if (response.status === 200) {
-        console.log('Get content from ZAZ successful. Status code is 200');
+        console.log('~~[INFO]~~ Getting content from ZAZ successful. Status code is 200');
         processContent(response, saveContent);
       }
     })
     .catch(error => {
-      console.log('Getting content failed', error);
+      console.log('~~[ERROR]~~ Getting content failed', error);
     });
 };
 
@@ -51,10 +51,10 @@ const saveContent = (menuDoc) => {
   const menuOtd = new MenuOtd(menuDoc);
   menuOtd.save()
     .then(result => {
-      console.log('Menu for the day successfully saved into database');
+      console.log(`~~[INFO]~~ Menu for the day successfully saved into database`);
     })
     .catch(err => {
-      console.log('An error occurred while saving to db', err);
+      console.log(`~~[ERROR]~~ An error occurred while saving to db`, err);
     });
 };
 
