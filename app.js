@@ -14,11 +14,9 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
-// TODO: below should be scheduled and executed once a week!
-// Each monday at 2 am
-// const job = schedule.scheduleJob('0 2 * * 1', () => {
-//   Scraper.scrapeAndSaveWholeWeek();
-// });
+
+// Heroku's Dyno is restarted once for a 24h so co following line of code will be executed at least once a day
+// getAndSaveMenuContent checks if there are documents in a collection and scrape data only if there are not
 Scraper.getAndSaveMenuContent(url);
 
 app.get('/', (req, res) => {
