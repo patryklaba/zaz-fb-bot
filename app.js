@@ -3,8 +3,10 @@ const request = require('request');
 const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+
 const MenuOtd = require('./models/menuOtd');
-const db = mongoose.connect(process.env.MONGODB_URI);
+const db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 const Scraper = require('./Scraper');
 const TextHelper = require('./TextHelper');
 const url = 'http://zaz-siedlce.pl';

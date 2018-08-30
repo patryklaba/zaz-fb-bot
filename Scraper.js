@@ -5,27 +5,35 @@ const MenuOtd = require('./models/menuOtd');
 const TextHelper = require('./TextHelper');
 
 exports.getAndSaveMenuContent = (url) => {
-  if (countDocsInCollection() > 0) {
-    console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
-    return;
-  }
-  console.log('~~[INFO]~~ Trying to get content from:', url);
-  axios.get(url)
-    .then(response => {
-      if (response.status === 200) {
-        console.log('~~[INFO]~~ Getting content from ZAZ successful. Status code is 200');
-        processContent(response, saveContent);
-      }
-    })
-    .catch(error => {
-      console.log('~~[ERROR]~~ Getting content failed', error);
-    });
+  countDocsInCollection(() => {
+    axios.get(url)
+      .then(response => {
+        if (response.status === 200) {
+          console.log('~~[INFO]~~ Getting content from ZAZ successful. Status code is 200');
+          processContent(response, saveContent);
+        }
+      })
+      .catch(error => {
+        console.log('~~[ERROR]~~ Getting content failed', error);
+      });
+  });
+
 };
 
-const countDocsInCollection = () => {
-  const collCount = MenuOtd.estimatedDocumentCount();
-  console.log(`~~[INFO]~~ number of docs in collection: ${collCount}`);
-  return  collCount;
+const countDocsInCollection = (cb) => {
+  let collCount = null;
+  MenuOtd.estimatedDocumentCount().exec()
+    .then(count => {
+      if (count > 0) {
+        console.log(`~~[INFO]~~ number of docs in collection: ${count}`);
+        console.log(`~~[INFO]~~ There are docs in collection. Do not have to scrape for data`);
+      } else {
+        console.log('~~[INFO]~~ Trying to get content from ZAZ site');
+        cb();
+      }
+    }).catch(error => {
+      console.log(`~~[ERROR]~~ something went wrong when counting docs in collection`,error);
+  });
 };
 
 const processContent = (content, cb) => {
