@@ -21,7 +21,6 @@ exports.getAndSaveMenuContent = (url) => {
 };
 
 const countDocsInCollection = (cb) => {
-  let collCount = null;
   MenuOtd.estimatedDocumentCount().exec()
     .then(count => {
       if (count > 0) {
