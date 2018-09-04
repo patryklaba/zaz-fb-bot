@@ -10,6 +10,7 @@ const db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 const Scraper = require('./Scraper');
 const TextHelper = require('./TextHelper');
 const url = 'http://zaz-siedlce.pl';
+const udpateInterval = '15 2 * * 0-6'; // everyday at 2:15am
 
 
 const app = express();
@@ -17,9 +18,33 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 5000), () => console.log(`Listening on the port ${process.env.PORT || 5000}`));
 
-// Heroku's Dyno is restarted once for a 24h so co following line of code will be executed at least once a day
-// getAndSaveMenuContent checks if there are documents in a collection and scrape data only if there are not
-Scraper.getAndSaveMenuContent(url);
+
+const updateCollection = (cronInterval, cb) => {
+  const job = schedule.scheduleJob(cronInterval, () => {
+    const opTime = new Date().toLocaleDateString();
+    console.log(`~~[INFO]~~ Update collection operation started at ${opTime}`);
+    // delete documents from collection first
+    MenuOtd.remove({}).exec()
+    .then(result => {
+      console.log(`~~[INFO]~~ Document deleted from db. Result: ${result}`);
+      cb();
+    })
+    .catch(err => {
+      console.log(`~~[ERROR]~~ An error occured when removing documents from db`);
+    });
+  });
+}
+
+
+
+updateCollection(udpateInterval, () => {
+  // Heroku's Dyno is restarted once for a 24h so co following line of code will be executed at least once a day
+  // getAndSaveMenuContent checks if there are documents in a collection and scrape data only if there are not
+  console.log(`~~[INFO]~~ Update collection task scheduled`);
+  Scraper.getAndSaveMenuContent(url);
+});
+
+
 
 app.get('/', (req, res) => {
   res.status(200).send('Deployed');
